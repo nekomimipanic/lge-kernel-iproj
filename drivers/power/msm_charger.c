@@ -2024,7 +2024,10 @@ and the battery FET in on and externel charger is disconnected. this is bug, we 
 }
 
 /* [LGE_UPDAET_S : for battery remove] */
+#if !defined(CONFIG_MACH_LGE_I_BOARD_DCM)
 extern void pm8058_chg_batt_remove_and_reset(void);
+#endif
+
 static void update_battery_remove_work(struct work_struct *work)
 {
   if(msm_batt_gauge->get_battery_temperature_adc() < 2000)
@@ -2034,7 +2037,10 @@ static void update_battery_remove_work(struct work_struct *work)
   else
   {
     printk(KERN_ERR "================== [ update_battery_remove_work ] BATTERY REMOVED!!!! =======================\n");
+
+#if !defined(CONFIG_MACH_LGE_I_BOARD_DCM)
     pm8058_chg_batt_remove_and_reset();
+#endif
   }
 }
 /* [LGE_UPDAET_E : for battery remove] */
@@ -2222,10 +2228,14 @@ static void handle_event(struct msm_hardware_charger *hw_chg, int event)
 //#ifdef CONFIG_LGE_PM_BATTERY_ALARM
 	case CHG_BATT_REMOVE_EVENT:
 		printk(KERN_DEBUG "############ Handle Event: [CHG_BATT_REMOVE_EVENT] #####################\n");
+#if !defined(CONFIG_MACH_LGE_I_BOARD_DCM)
 		queue_delayed_work(msm_chg.event_wq_thread,
 				&msm_chg.update_batt_remove_work,
 			      round_jiffies_relative(msecs_to_jiffies
 						     (msm_chg.processing_delay)));
+#else
+		update_battery_remove();
+#endif
 		break;
 //#endif
 /* [LGE_UPDAET_E : for battery remove] */
@@ -2779,11 +2789,15 @@ static int __devinit msm_charger_probe(struct platform_device *pdev)
 		msm_chg.get_batt_capacity_percent =
 		    msm_chg_get_batt_capacity_percent;
 
+#if !defined(CONFIG_MACH_LGE_I_BOARD_DCM)
 	msm_chg.processing_delay = 1000;  /* [LGE_UPDAET : for battery remove] */
+#endif
 	mutex_init(&msm_chg.status_lock);
 	INIT_DELAYED_WORK(&msm_chg.teoc_work, teoc);
 	INIT_DELAYED_WORK(&msm_chg.update_heartbeat_work, update_heartbeat);
+#if !defined(CONFIG_MACH_LGE_I_BOARD_DCM)
 	INIT_DELAYED_WORK(&msm_chg.update_batt_remove_work, update_battery_remove_work);  /* [LGE_UPDAET : for battery remove] */
+#endif
 
 /* [LGE_UPDATE_S kyungho.kong@lge.com] */
 #ifdef CONFIG_LGE_PM_TEMPERATURE_MONITOR

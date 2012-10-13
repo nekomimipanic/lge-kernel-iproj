@@ -3680,7 +3680,9 @@ static struct pm8xxx_keypad_platform_data i_dcm_keypad_data = {
 };
 
 static struct pm8xxx_rtc_platform_data pm8058_rtc_pdata = {
-	.rtc_write_enable = false,
+/* by nekomimip@nic 2012.Sep.10 for cyanogenmod */
+//	.rtc_write_enable = false,
+	.rtc_write_enable = true,
 	.rtc_alarm_powerup = false,
 };
 
@@ -3688,7 +3690,9 @@ static struct pm8xxx_pwrkey_platform_data pm8058_pwrkey_pdata = {
 	.pull_up		= 1,
 	.kpd_trigger_delay_us   = 15625,
 	.wakeup			= 1,
-	.pwrkey_time_ms		= 500,
+	/* by nekomimip@nic 2012.Sep.10 for cyanogenmod */
+//	.pwrkey_time_ms		= 500,
+	.pwrkey_time_ms		= 0,
 };
 
 #if defined(CONFIG_PMIC8058_OTHC) || defined(CONFIG_PMIC8058_OTHC_MODULE)
@@ -6118,7 +6122,10 @@ static void __init msm8x60_init_mmc(void)
 #if defined(CONFIG_LGE_BCM432X_PATCH)
 	/* GPIO config */	
 	gpio_tlmm_config(GPIO_CFG(CONFIG_BCMDHD_GPIO_WL_RESET, 0, GPIO_CFG_OUTPUT, GPIO_CFG_PULL_UP, GPIO_CFG_2MA), GPIO_CFG_ENABLE);
-	gpio_set_value(CONFIG_BCMDHD_GPIO_WL_RESET, 0);
+	
+	/* by nekomimip@nic 2012.Sep.10 for cyanogenmod SDIO Wlan */
+//	gpio_set_value(CONFIG_BCMDHD_GPIO_WL_RESET, 0);
+	gpio_set_value(CONFIG_BCMDHD_GPIO_WL_RESET, 1);	
 	
 	gpio_tlmm_config(GPIO_CFG(CONFIG_BCMDHD_GPIO_WL_HOSTWAKEUP, 0, GPIO_CFG_INPUT, GPIO_CFG_PULL_UP, GPIO_CFG_2MA), GPIO_CFG_ENABLE);
 
